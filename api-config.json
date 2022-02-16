@@ -1,0 +1,12 @@
+{
+  "name" : "dev",
+  "path" : "/api/v2",
+  "state" : "published",
+  "version" : "1.0",
+  "organization" : "dev",
+  "apiSpecification" : {
+    "resource" : "dev.url"
+  },
+  "backendBasepath" : "http://172.16.63.1:8088/",
+  "clientOrganizations" : [ "dev" ]
+}
