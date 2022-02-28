@@ -11,7 +11,7 @@
     <description>A demo API to explain CI/CD integration</description>
 
     <properties>
-        <apiConfigFile>./api-config.json</apiConfigFile>
+        <apiConfigFile>src/main/resources/api-config.json</apiConfigFile>
         <stage>dev</stage>
     </properties>
 
@@ -37,8 +37,9 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>distribution</id>
@@ -47,10 +48,10 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>a2a-api-${project.version}</finalName>
+                            <finalName>${artifactId}-${project.version}</finalName>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
-                                <descriptor>assembly/assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/assembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
@@ -71,7 +72,6 @@
                 <configuration>
                     <addResourcesToClasspath>true</addResourcesToClasspath>
                     <mainClass>com.axway.apim.APIImportApp</mainClass>
-                    <classpath/>
                     <commandlineArgs>
                         -c ${apiConfigFile} -s ${stage} -f true
                     </commandlineArgs>
