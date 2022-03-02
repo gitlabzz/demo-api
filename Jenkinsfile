@@ -43,7 +43,7 @@ pipeline {
             }
         }
 
-        stage('Deploy Package'){
+        stage('Put Package in Nexus'){
             steps{
                 // later update to deploy when i have Nexus
                 sh "mvn clean install"
