@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage ('Git Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/gitlabzz/demo-api.git'
+                git branch: 'main', credentialsId: '2bc605b8-3d32-4c7b-84e2-4d858bc31c46', url: 'https://github.com/gitlabzz/demo-api.git'
             }
         }
         stage('Build') {
