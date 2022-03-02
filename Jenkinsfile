@@ -11,7 +11,7 @@ node {
         withCredentials([usernamePassword(credentialsId: 'APIM_ADMIN_USERNAME_PASSWORD_DEV_ENV', passwordVariable: 'password', usernameVariable: 'username')]) {
             env.APIM_ADMIN_USER = username
             env.APIM_ADMIN_PASSWORD = password
-            env.AXWAY_APIM_CLI_HOME = "src/main/environments/dev"
+            env.AXWAY_APIM_CLI_HOME = "src/main/environments/${BRANCH_NAME}"
         }
     }
 
@@ -19,6 +19,7 @@ node {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
             if (isUnix()) {
+                echo "Publishing to environment: '${BRANCH_NAME}'"
                 sh '"$MVN_HOME/bin/mvn" exec:java'
             }
         }
