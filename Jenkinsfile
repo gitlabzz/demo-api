@@ -31,7 +31,7 @@ pipeline {
             }
         }
 
-        stage('Deploy API'){
+        stage('Publish API'){
             steps{
                 sh "mvn clean install exec:java"
              }
@@ -39,6 +39,13 @@ pipeline {
 
         stage('Build Package'){
             steps{
+                sh "mvn clean install"
+            }
+        }
+
+        stage('Deploy Package'){
+            steps{
+                // later update to deploy when i have Nexus
                 sh "mvn clean install"
             }
         }
