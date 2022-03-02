@@ -2,34 +2,43 @@ pipeline {
     agent any
 
     tools {
-        // Install the Maven version configured as "M3" and add it to the path.
         maven "M3"
     }
 
     environment {
-      APIM_ADMIN_USER = "apiadmin"
-      APIM_ADMIN_PASSWORD = "changeme1"
-      AXWAY_APIM_CLI_HOME = "src/main/environments/dev"
+          AXWAY_APIM_CLI_HOME_DEV = "src/main/environments/dev"
     }
 
     stages {
-        stage ('Git Checkout') {
+        stage ('Checkout Source Code') {
             steps {
-                git branch: 'main', credentialsId: '2bc605b8-3d32-4c7b-84e2-4d858bc31c46', url: 'https://github.com/gitlabzz/demo-api.git'
+                checkout scm
             }
         }
-        stage('Build') {
+
+        stage('Prepare Environment') {
             steps {
-                // Run Maven
-                sh "mvn clean exec:java"
-
-                //sh 'mvn clean exec:java -Dexec.args="-h ${host} -u ${username} -p ${password} -c ./api-definition/1-design-only-config.json -s api-env -f true -returnCodeMapping 10:0"'
-
-                // If you prefer to use Jenkins-Credentials instead of APIM_CLI_HOME/conf use this instruction
-                /* withCredentials([usernamePassword(credentialsId: "${stage}", usernameVariable: 'username', passwordVariable: 'password')])  {
-                    sh 'mvn clean exec:java -Dexec.args="-h ${host} -u ${username} -p ${password} -c ./api-definition/1-design-only-config.json -s api-env -f true -returnCodeMapping 10:0"'
-                } */
+                script {
+                  withCredentials([usernamePassword(credentialsId: 'APIM_ADMIN_USERNAME_PASSWORD_DEV_ENV', usernameVariable: 'username', passwordVariable: 'password')]) {
+                        env.APIM_ADMIN_USER=username
+                        env.APIM_ADMIN_PASSWORD=password
+                        env.AXWAY_APIM_CLI_HOME = AXWAY_APIM_CLI_HOME_DEV
+                  }
+                }
             }
-       }
+        }
+
+        stage('Build Package'){
+            steps{
+                sh "mvn clean install"
+            }
+        }
+
+        stage('Deploy API'){
+            steps{
+                sh "mvn exec:java"
+            }
+        }
+
    }
 }
