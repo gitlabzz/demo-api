@@ -5,10 +5,11 @@
   "version": "1.0",
   "organization": "dev",
   "apiSpecification": {
-    "resource": "dev.url"
+    "resource": "src/main/resources/dev.url"
   },
   "backendBasepath": "http://172.16.63.1:8088/",
   "clientOrganizations": [
     "dev"
-  ]
+  ],
+  "image": "swagger-icon.png"
 }
