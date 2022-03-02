@@ -31,17 +31,16 @@ pipeline {
             }
         }
 
+        stage('Deploy API'){
+            steps{
+                sh "mvn clean install exec:java"
+             }
+        }
+
         stage('Build Package'){
             steps{
                 sh "mvn clean install"
             }
         }
-
-        stage('Deploy API'){
-            steps{
-                sh "mvn exec:java"
-            }
-        }
-
    }
 }
