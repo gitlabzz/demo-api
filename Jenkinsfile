@@ -1,8 +1,15 @@
 pipeline {
     agent any
+
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
         maven "M3"
+    }
+
+    environment {
+      APIM_ADMIN_USER = "apiadmin"
+      APIM_ADMIN_PASSWORD = "changeme1"
+      AXWAY_APIM_CLI_HOME = "src/main/environments/dev"
     }
 
     stages {
