@@ -3,6 +3,7 @@
   "path": "/api/v2",
   "state": "published",
   "version": "1.0",
+  "summary": "The summary, which will appear in overview screens",
   "organization": "dev",
   "apiSpecification": {
     "resource": "src/main/resources/dev.url"
