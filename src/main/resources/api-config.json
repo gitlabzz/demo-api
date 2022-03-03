@@ -6,7 +6,7 @@
   "summary": "The summary, which will appear in overview screens",
   "organization": "dev",
   "apiSpecification": {
-    "resource": "src/main/resources/dev.url"
+    "resource": "./dev.url"
   },
   "backendBasepath": "http://172.16.63.1:8088/",
   "clientOrganizations": [
