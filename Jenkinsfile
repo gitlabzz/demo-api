@@ -15,13 +15,17 @@ node {
 
             echo "Pull request is   ========================================>  ${pullRequest}."
 
-            sh '''
-                git fetch origin +refs/pull/1/merge
-                git checkout FETCH_HEAD
-            '''
-
-            // as we know, branch name must be same as environment name in src/main/resources to pick config/env.properties file by apim-cli utility.
-            branchName = "dev"
+            try {
+                git branch: '${BRANCH_NAME}', credentialsId: '2bc605b8-3d32-4c7b-84e2-4d858bc31c46', url: 'https://github.com/gitlabzz/demo-api.git'
+            }
+            catch (exception) {
+                sh '''
+                    git fetch origin +refs/pull/''' + pullRequest + '''/merge
+                    git checkout FETCH_HEAD
+                '''
+                // as we know, branch name must be same as environment name in src/main/resources to pick config/env.properties file by apim-cli utility.
+                branchName = "dev"
+            }
 
             echo "Check out from pull request '${BRANCH_NAME}' is successfully completed!"
         } else {
