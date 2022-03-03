@@ -20,6 +20,7 @@ node {
         withEnv(["MVN_HOME=$mvnHome"]) {
             if (isUnix()) {
                 echo "Publishing to environment: '${BRANCH_NAME}'"
+                env.MAVEN_OPTS='-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
                 sh '"$MVN_HOME/bin/mvn" exec:java'
             }
         }
