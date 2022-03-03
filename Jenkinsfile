@@ -9,14 +9,27 @@ node {
         if (branchName.toUpperCase().startsWith("PR-")) {
             echo "Building for pull request '${branchName}', so targetting it to the 'DEV' environment!!!"
 
+            echo "Checking out pull request  ========================================> ${branchName}"
+
+            pullRequest = branchName.substring(branchName.lastIndexOf("-") + 1)
+
+            echo "Pull request is   ========================================>  ${pullRequest}."
+
+            sh '''
+                git fetch origin +refs/pull/1/merge
+                git checkout FETCH_HEAD
+            '''
+
             // as we know, branch name must be same as environment name in src/main/resources to pick config/env.properties file by apim-cli utility.
             branchName = "dev"
+
+            echo "Check out from pull request '${BRANCH_NAME}' is successfully completed!"
+        } else {
+            echo "Checking out branch  ========================================> ${BRANCH_NAME}"
+            git branch: '${BRANCH_NAME}', credentialsId: '2bc605b8-3d32-4c7b-84e2-4d858bc31c46', url: 'https://github.com/gitlabzz/demo-api.git'
+            echo "Check out from '${BRANCH_NAME}' is successfully completed!"
         }
-        echo "Checking out branch  ========================================> ${BRANCH_NAME}"
 
-        git branch: '${BRANCH_NAME}', credentialsId: '2bc605b8-3d32-4c7b-84e2-4d858bc31c46', url: 'https://github.com/gitlabzz/demo-api.git'
-
-        echo "Check out from '${BRANCH_NAME}' is successfully completed!"
     }
 
     stage('Prepare Environment') {
@@ -38,7 +51,7 @@ node {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
             if (isUnix()) {
-                echo "Publishing to environment: '${BRANCH_NAME}'"
+                echo "Publishing to environment: '${branchName}'"
                 env.MAVEN_OPTS = '-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
                 sh '"$MVN_HOME/bin/mvn" exec:java'
             }
