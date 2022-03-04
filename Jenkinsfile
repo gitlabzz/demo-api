@@ -3,18 +3,20 @@ node {
     def mvnHome
     def branchName
     def targetEnvironment
+    def pullRequest
 
-    stage('Checkout Code') {
+    stage('Initialize') {
         branchName = BRANCH_NAME
         if (branchName.toUpperCase().startsWith("PR-")) {
-            echo "Building for pull request '${branchName}', so targetting it to the 'DEV' environment!!!"
-
+            echo "found pull request '${branchName}', so targetting it to the 'DEV' environment!!!"
             echo "Checking out pull request  ========================================> ${branchName}"
-
             pullRequest = branchName.substring(branchName.lastIndexOf("-") + 1)
-
             echo "Pull request is   ========================================>  ${pullRequest}."
+        }
+    }
 
+    stage("Checkout Code (${pullRequest ? 'PR-' + pullRequest : branchName})") {
+        if (pullRequest) {
             try {
                 git branch: '${BRANCH_NAME}', credentialsId: '2bc605b8-3d32-4c7b-84e2-4d858bc31c46', url: 'https://github.com/gitlabzz/demo-api.git'
             }
@@ -36,7 +38,7 @@ node {
 
     }
 
-    stage('Prepare Environment') {
+    stage("Prepare Environment (${branchName})") {
         targetEnvironment = branchName.toUpperCase()
         mvnHome = tool 'M3'
 
@@ -51,7 +53,7 @@ node {
         }
     }
 
-    stage('Publish API') {
+    stage("Publish API (${branchName})") {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
             if (isUnix()) {
