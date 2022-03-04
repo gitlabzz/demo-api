@@ -57,6 +57,15 @@ node {
         }
     }
 
+    stage('Prepare Package') {
+        // Run the maven build
+        withEnv(["MVN_HOME=$mvnHome"]) {
+            if (isUnix()) {
+                sh '"$MVN_HOME/bin/mvn" clean install'
+            }
+        }
+    }
+
     stage("APIs Before Publish (${branchName})") {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
@@ -89,15 +98,6 @@ node {
                 echo "Publishing to environment: '${branchName}'"
                 env.MAVEN_OPTS = '-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
                 sh '"$MVN_HOME/bin/mvn" exec:java@list-api'
-            }
-        }
-    }
-
-    stage('Prepare Package') {
-        // Run the maven build
-        withEnv(["MVN_HOME=$mvnHome"]) {
-            if (isUnix()) {
-                sh '"$MVN_HOME/bin/mvn" clean install'
             }
         }
     }
