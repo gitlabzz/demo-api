@@ -4,15 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>demo-api</artifactId>
-    <groupId>axway.api-management.api</groupId>
+    <groupId>axway.api.management.demo</groupId>
     <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>A sample wsdl demo API</name>
     <description>A demo API to explain CI/CD integration</description>
 
     <properties>
         <apiConfigFile>src/main/resources/api-config.json</apiConfigFile>
         <apim.cli.version>1.11.0-SNAPSHOT</apim.cli.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <distributionManagement>
@@ -83,25 +85,24 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-
+                <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>distribution</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
+                        <id>import-api</id>
+                        <configuration>
+                            <mainClass>com.axway.apim.APIImportApp</mainClass>
+                            <commandlineArgs>
+                                -c ${apiConfigFile} -f true
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>list-api</id>
+                        <configuration>
+                            <mainClass>axway.api.management.demo.ExportAPI</mainClass>
+                        </configuration>
                     </execution>
                 </executions>
-
-                <configuration>
-                    <addResourcesToClasspath>true</addResourcesToClasspath>
-                    <mainClass>com.axway.apim.APIImportApp</mainClass>
-                    <commandlineArgs>
-                        -c ${apiConfigFile} -f true
-                    </commandlineArgs>
-                </configuration>
-
             </plugin>
         </plugins>
     </build>
