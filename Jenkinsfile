@@ -5,12 +5,10 @@ node {
     def targetEnvironment
     def pullRequest
 
-    def environments = [
-            dev : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
-            sit : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
-            uat : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
-            prod: [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
-    ]
+    def environments = [dev : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
+                        sit : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
+                        uat : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
+                        prod: [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],]
 
     stage('Initialize') {
         branchName = BRANCH_NAME
@@ -26,8 +24,7 @@ node {
         if (pullRequest) {
             try {
                 git branch: '${BRANCH_NAME}', credentialsId: '2bc605b8-3d32-4c7b-84e2-4d858bc31c46', url: 'https://github.com/gitlabzz/demo-api.git'
-            }
-            catch (exception) {
+            } catch (exception) {
                 sh '''
                     git fetch origin +refs/pull/''' + pullRequest + '''/merge
                     git checkout FETCH_HEAD
@@ -60,6 +57,17 @@ node {
         }
     }
 
+    stage("APIs Before Publish (${branchName})") {
+        // Run the maven build
+        withEnv(["MVN_HOME=$mvnHome"]) {
+            if (isUnix()) {
+                echo "Publishing to environment: '${branchName}'"
+                env.MAVEN_OPTS = '-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
+                sh '"$MVN_HOME/bin/mvn" exec:java@list-api'
+            }
+        }
+    }
+
     stage("Publish API (${branchName})") {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
@@ -69,7 +77,18 @@ node {
                 env.BACKEND_PROTOCOL = environments.get(branchName).get("BACKEND_PROTOCOL")
                 env.BACKEND_HOST = environments.get(branchName).get("BACKEND_HOST")
                 env.BACKEND_PORT = environments.get(branchName).get("BACKEND_PORT")
-                sh '"$MVN_HOME/bin/mvn" exec:java'
+                sh '"$MVN_HOME/bin/mvn" exec:java@import-api'
+            }
+        }
+    }
+
+    stage("APIs After Publish (${branchName})") {
+        // Run the maven build
+        withEnv(["MVN_HOME=$mvnHome"]) {
+            if (isUnix()) {
+                echo "Publishing to environment: '${branchName}'"
+                env.MAVEN_OPTS = '-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
+                sh '"$MVN_HOME/bin/mvn" exec:java@list-api'
             }
         }
     }
