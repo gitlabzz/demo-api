@@ -5,6 +5,13 @@ node {
     def targetEnvironment
     def pullRequest
 
+    def environments = [
+            dev : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
+            sit : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
+            uat : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
+            prod: [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
+    ]
+
     stage('Initialize') {
         branchName = BRANCH_NAME
         if (branchName.toUpperCase().startsWith("PR-")) {
@@ -59,6 +66,9 @@ node {
             if (isUnix()) {
                 echo "Publishing to environment: '${branchName}'"
                 env.MAVEN_OPTS = '-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
+                env.BACKEND_PROTOCOL = environments.get(branchName).get("BACKEND_PROTOCOL")
+                env.BACKEND_HOST = environments.get(branchName).get("BACKEND_HOST")
+                env.BACKEND_PORT = environments.get(branchName).get("BACKEND_PORT")
                 sh '"$MVN_HOME/bin/mvn" exec:java'
             }
         }
