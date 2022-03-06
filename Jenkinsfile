@@ -4,6 +4,7 @@ node {
     def branchName
     def targetEnvironment
     def pullRequest
+    def apimHost
 
     def environments = [dev : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
                         sit : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
@@ -40,6 +41,8 @@ node {
             echo "Check out from '${BRANCH_NAME}' is successfully completed!"
         }
 
+        apimHost = "APIM_${branchName.toUpperCase()}_HOST"
+
     }
 
     stage("Prepare Environment (${branchName})") {
@@ -49,11 +52,12 @@ node {
         echo "Target Environment is ---------------------------------> ${targetEnvironment}"
 
         withCredentials([usernamePassword(credentialsId: "APIM_ADMIN_USERNAME_PASSWORD_${targetEnvironment}_ENV", passwordVariable: 'password', usernameVariable: 'username')]) {
+            env.APIM_HOST = apimHost
             env.APIM_ADMIN_USER = username
             env.APIM_ADMIN_PASSWORD = password
             env.AXWAY_APIM_CLI_HOME = "src/main/environments/${branchName}"
 
-            echo "Using 'conf/env.properties' file from ---------------------------------> ${AXWAY_APIM_CLI_HOME}"
+            echo "Using 'conf/env.properties' file from ---------------------------------> '${AXWAY_APIM_CLI_HOME}'"
         }
     }
 
@@ -70,7 +74,7 @@ node {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
             if (isUnix()) {
-                echo "Publishing to environment: '${branchName}'"
+                echo "Retrieving APIs from '${branchName}' before publish"
                 env.MAVEN_OPTS = '-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
                 sh '"$MVN_HOME/bin/mvn" exec:java@list-api'
             }
@@ -95,7 +99,7 @@ node {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
             if (isUnix()) {
-                echo "Publishing to environment: '${branchName}'"
+                echo "Retrieving APIs from '${branchName}' after publish"
                 env.MAVEN_OPTS = '-Xms256m -Xmx512m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
                 sh '"$MVN_HOME/bin/mvn" exec:java@list-api'
             }
