@@ -41,8 +41,10 @@ node {
             echo "Check out from '${BRANCH_NAME}' is successfully completed!"
         }
 
-        apimHost = "APIM_${branchName.toUpperCase()}_HOST"
-
+        apimHostEnvVar = "APIM_${branchName.toUpperCase()}_HOST"
+        echo "Using Global Environment Variable: '${apimHostEnvVar}'"
+        apimHost = env.getProperty(apimHostEnvVar)
+        echo "The Global Environment Variable: '${apimHostEnvVar}' is set to '${apimHost}'"
     }
 
     stage("Prepare Environment (${branchName})") {
