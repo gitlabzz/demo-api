@@ -33,6 +33,21 @@ export APIM_ADMIN_PASSWORD=changeme1
 export AXWAY_APIM_CLI_HOME=src/main/environments/dev
 mvn clean install exec:java
 
+
+
+## COMMAND LINE MAVEN INVOKE
+// command line invoke maven
+export MAVEN_OPTS='-Xms64m -Xmx256m -Dlog4j.configurationFile=src/main/resources/log4j/log4j2.xml'
+export AXWAY_APIM_CLI_HOME=src/main/environments/dev
+export host=172.16.63.153
+export APIM_ADMIN_PASSWORD=changeme
+export APIM_ADMIN_USER=apiadmin
+export BACKEND_PROTOCOL=http
+export BACKEND_HOST=172.16.63.1
+export BACKEND_PORT=8088
+mvn exec:java
+
+
 ## RUN USING MAVEN
 mvn clean exec:java
 
