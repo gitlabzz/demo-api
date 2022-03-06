@@ -8,7 +8,7 @@
   "apiSpecification": {
     "resource": "src/main/resources/dev.url"
   },
-  "backendBasepath": "http://172.16.63.1:8088/",
+  "backendBasepath": "${BACKEND_PROTOCOL}://${BACKEND_HOST}:${BACKEND_PORT}/",
   "clientOrganizations": [
     "dev"
   ],
