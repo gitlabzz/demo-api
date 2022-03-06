@@ -53,6 +53,12 @@
             <version>${apim.cli.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.axway-api-management-plus.apim-cli</groupId>
+            <artifactId>apimcli-tool</artifactId>
+            <version>${apim.cli.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -99,7 +105,10 @@
                     <execution>
                         <id>list-api</id>
                         <configuration>
-                            <mainClass>axway.api.management.demo.ExportAPI</mainClass>
+                            <mainClass>com.axway.apim.cli.APIManagerCLI</mainClass>
+                            <commandlineArgs>
+                                api get
+                            </commandlineArgs>
                         </configuration>
                     </execution>
                 </executions>
