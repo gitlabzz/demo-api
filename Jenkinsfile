@@ -60,7 +60,7 @@ node {
             env.APIM_ADMIN_USER = username
             env.APIM_ADMIN_PASSWORD = password
             env.AXWAY_APIM_CLI_HOME = "src/main/environments/${branchName}"
-            env.EVN = branchName
+            env.ENV = branchName
 
             echo "Setting 'AXWAY_APIM_CLI_HOME' to --------------------------------------> ${AXWAY_APIM_CLI_HOME}"
             echo "Using 'conf/env.properties' file from ---------------------------------> '${AXWAY_APIM_CLI_HOME}'"
