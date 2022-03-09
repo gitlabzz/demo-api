@@ -6,10 +6,10 @@ node {
     def pullRequest
     def apimHost
 
-    def environments = [dev : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
-                        sit : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
-                        uat : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],
-                        prod: [BACKEND_PROTOCOL: "http", BACKEND_HOST: "172.16.63.1", BACKEND_PORT: "8088"],]
+    def environments = [dev : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "dev.host.asim.com", BACKEND_PORT: "8088"],
+                        sit : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "sit.host.asim.com", BACKEND_PORT: "8088"],
+                        uat : [BACKEND_PROTOCOL: "http", BACKEND_HOST: "uat.host.asim.com", BACKEND_PORT: "8088"],
+                        prod: [BACKEND_PROTOCOL: "http", BACKEND_HOST: "prod.host.asim.com", BACKEND_PORT: "8088"],]
 
     stage('Initialize') {
         branchName = BRANCH_NAME
@@ -60,6 +60,7 @@ node {
             env.APIM_ADMIN_USER = username
             env.APIM_ADMIN_PASSWORD = password
             env.AXWAY_APIM_CLI_HOME = "src/main/environments/${branchName}"
+            env.ENV = branchName
 
             echo "Setting 'AXWAY_APIM_CLI_HOME' to --------------------------------------> ${AXWAY_APIM_CLI_HOME}"
             echo "Using 'conf/env.properties' file from ---------------------------------> '${AXWAY_APIM_CLI_HOME}'"
@@ -67,6 +68,7 @@ node {
             echo "Getting APIM login credentails from -----------------------------------> 'APIM_ADMIN_USERNAME_PASSWORD_${targetEnvironment}_ENV' secret"
             echo "Setting APIM_ADMIN_USER to --------------------------------------------> ${username}"
             echo "Setting APIM_ADMIN_PASSWORD from secret 'APIM_ADMIN_USERNAME_PASSWORD_${targetEnvironment}_ENV'"
+            echo "Setting EVN -----------------------------------------------------------> ${branchName}"
         }
     }
 
